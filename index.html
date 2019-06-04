@@ -1,0 +1,219 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <script src="/js/jquery.js"></script>
+        <script src="/js/prefixfree.js"></script>
+        <script src="/js/vue.js"></script>
+        <style>
+            html,body{
+                margin:0;
+            }
+            #loader{
+                background: gray;
+                color:whitesmoke;
+                box-shadow: 0 0 10% 10% rgba(0, 0, 0, 0.5);
+                position:fixed;
+                top:0;
+                bottom:0;
+                left:0;
+                right:0;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                font-size: 10vw;
+                z-index:228;
+            }
+            #main{
+                background: #292929;
+                width:100vw;
+                height: 100vh;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+            #window{
+                background: #1e1e1e;
+                width:80vw;
+                height: 80vh;
+            }
+            #bar{
+                width:100%;
+                height: 30px;
+                background: #777;
+                display: flex;
+                justify-content: flex-end;
+            }
+            #bar > *{
+                width: 30px;
+                height: 100%;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+            .minimize_line{
+                width:20px;
+                height: 3px;
+                border-radius: 3px;
+                background: #1e1e1e;
+            }
+            #restore{
+                position: relative;
+            }
+            .restore_square{
+                width:10px;
+                height:10px;
+                border: 2px solid black;
+                position: absolute;
+            }
+            .restore_square:nth-of-type(1){
+                transform: translate(2px, -2px);
+            }
+            .restore_square:nth-of-type(2){
+                transform: translate(-2px, 2px);
+                background: #777;
+            }
+            #cross{
+                position: relative;
+            }
+            .cross_line{
+                width:20px;
+                height: 3px;
+                border-radius: 3px;
+                background: rgb(243, 85, 85);
+                position: absolute;
+            }
+            .cross_line:nth-of-type(1){
+                transform: rotate(45deg);
+            }
+            .cross_line:nth-of-type(2){
+                transform: rotate(135deg);
+            }
+            #codespace{
+                width:100%;
+                height:calc(100% - 30px);
+                overflow-y: scroll;
+                color:beige;
+                padding: 30px;
+                box-sizing: border-box;
+            }
+            .tab{
+                visibility: hidden;
+            }
+            .tab::after{
+                content: "xxxx";
+            }
+            #restart{
+                position: fixed;
+                left: calc(50vw - 100px);
+                top: calc(50vh - 15px);
+                width: 200px;
+                height: 30px;
+                background:rgb(63, 207, 128);
+                border-radius: 10px;
+                box-shadow: 0 0 10px 3px black inset;
+                z-index: 2;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                font-size: 25px;
+                user-select: none;
+            }
+        </style>
+        <script>
+            let workspace = {
+                text:[],
+                position:0,
+                loaded:false
+            }
+            const tab = `<span class="tab"></span>`;
+            const BR = "<br>";
+            $.ajax({
+                url:"/index.html",
+                method:"get",
+                success:(data)=>{
+                    data = data.split("\r\n");
+                    workspace.text.push(...data.shift().split(""));
+                    data.forEach((line)=>{
+                        let spaces = 0;
+                        for(let i=0; i<line.length; i++){
+                            if(line[i]===" ")
+                                spaces++;
+                            else break;
+                        }
+                        workspace.text.push(
+                            BR + tab.repeat(Math.floor(spaces/4)), 
+                            ...line.substr(spaces).split("")
+                        );
+                    });
+                    workspace.loaded = true;
+                },
+                error:(a,b,c)=>console.error(a,b,c)
+            });
+            const nextSymbol = event => {
+                if(workspace.position >= workspace.text.length){
+                    restart.visible = true;
+                    return;
+                }
+                let codespace = $("#codespace");
+                codespace.append(workspace.text[workspace.position++]);
+                let scrollTop = codespace.scrollTop();
+                codespace.scrollTop(scrollTop + 20);
+            };
+            $(document).on("keypress", nextSymbol);
+            $().ready(()=>
+                $("#codespace").on("click", nextSymbol)
+            );
+        </script>
+    </head>
+    <body>
+        <div id="main">
+            <div id="window">
+                <div id="bar">
+                    <div id="minimize">
+                        <div class="minimize_line"></div>
+                    </div>
+                    <div id="restore">
+                        <div class="restore_square"></div>
+                        <div class="restore_square"></div>
+                    </div>
+                    <div id="cross">
+                        <div class="cross_line"></div>
+                        <div class="cross_line"></div>
+                    </div>
+                </div>
+                <div id="codespace">
+                </div>
+            </div>
+        </div>
+        <div id="loader" v-if="!loaded">
+            <span>
+                Loading...
+            </span>
+        </div>
+        <div id="restart" v-if="visible" @click="restart">
+            <span>
+                Restart?
+            </span>
+        </div>
+        <script>
+            let loader = new Vue({
+                el:"#loader",
+                data:workspace
+            });
+            let restart = new Vue({
+                el:"#restart",
+                data:{
+                    visible:false
+                },
+                methods:{
+                    restart(){
+                        this.visible = false;
+                        workspace.position = 0;
+                        $("#codespace").text("");
+                    }
+                }
+            });
+        </script>
+    </body>
+</html>
