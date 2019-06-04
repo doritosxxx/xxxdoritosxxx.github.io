@@ -132,7 +132,7 @@
                 url:"/index.html",
                 method:"get",
                 success:(data)=>{
-                    data = data.split("\r\n");
+                    data = data.split("\n");
                     workspace.text.push(...data.shift().split(""));
                     data.forEach((line)=>{
                         let spaces = 0;
