@@ -43,9 +43,17 @@
                 height: 30px;
                 background: #777;
                 display: flex;
+                justify-content: space-between;
+            }
+            #filename{
+                margin:6px;
+                margin-left:15px;
+            }
+            #buttons{
+                display: flex;
                 justify-content: flex-end;
             }
-            #bar > *{
+            #buttons > *{
                 width: 30px;
                 height: 100%;
                 display: flex;
@@ -179,7 +187,7 @@
                         return;
                     }
                     codespace.append(workspace.text[workspace.position++]);
-                    codespace.scrollTop(999999999999);
+                    codespace.scrollTop(-999999999999);
                 };
                 $("#codespace").on("click", nextSymbol);
                 $(document).on("keypress", nextSymbol);
@@ -190,16 +198,19 @@
         <div id="main">
             <div id="window">
                 <div id="bar">
-                    <div id="minimize">
-                        <div class="minimize_line"></div>
-                    </div>
-                    <div id="restore">
-                        <div class="restore_square"></div>
-                        <div class="restore_square"></div>
-                    </div>
-                    <div id="cross">
-                        <div class="cross_line"></div>
-                        <div class="cross_line"></div>
+                    <span id="filename">web developer simulator</span>
+                    <div id="buttons">
+                        <div id="minimize">
+                            <div class="minimize_line"></div>
+                        </div>
+                        <div id="restore">
+                            <div class="restore_square"></div>
+                            <div class="restore_square"></div>
+                        </div>
+                        <div id="cross">
+                            <div class="cross_line"></div>
+                            <div class="cross_line"></div>
+                        </div>
                     </div>
                 </div>
                 <div id="codespace" class="html"></div>
