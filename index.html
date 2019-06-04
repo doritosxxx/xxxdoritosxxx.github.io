@@ -148,6 +148,18 @@
                 font-size: 25px;
                 user-select: none;
             }
+            #prompt{
+                color: white;
+                font-size:30px;
+                position: fixed;
+                width: 100vw;
+                height: 100vh;
+                left: 0;
+                top: 0;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
         </style>
         <script>
             let workspace = {
@@ -186,6 +198,7 @@
                         restart.visible = true;
                         return;
                     }
+                    prompt.visible = false;
                     codespace.append(workspace.text[workspace.position++]);
                     codespace.scrollTop(-999999999999);
                 };
@@ -226,6 +239,9 @@
                 Restart?
             </span>
         </div>
+        <div id="prompt" v-if="visible">
+            <span>press any key on your keyboard to start coding</span>
+        </div>
         <script>
             let loader = new Vue({
                 el:"#loader",
@@ -244,6 +260,12 @@
                         workspace.position = 0;
                         $("#codespace").text("");
                     }
+                }
+            });
+            let prompt = new Vue({
+                el:"#prompt",
+                data:{
+                    visible: true
                 }
             });
         </script>
