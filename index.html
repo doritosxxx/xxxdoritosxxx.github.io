@@ -180,8 +180,7 @@
                         return;
                     }
                     codespace.append(workspace.text[workspace.position++]);
-                    let scrollTop = codespace.scrollTop();
-                    codespace.scrollTop(scrollTop + 20);
+                    codespace.scrollTop(999999999999);
                 };
                 
                 $("#codespace").on("click", nextSymbol);
