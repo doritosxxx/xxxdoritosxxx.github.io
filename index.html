@@ -97,6 +97,26 @@
                 padding: 30px;
                 box-sizing: border-box;
             }
+            #codespace::after{
+                display: inline-block;
+                content:"";
+                width:2px;
+                height:0.8em;
+                background: white;
+                margin-left: 2px;
+                animation: cursor_blink 1s linear infinite;
+            }
+            @keyframes cursor_blink{
+                0%{
+                    visibility: hidden;
+                }
+                50%{
+                    visibility: hidden;
+                }
+                100%{
+                    visibility: initial;
+                }
+            }
             .tab{
                 visibility: hidden;
             }
@@ -133,7 +153,7 @@
                 method:"get",
                 success:(data)=>{
                     data = data.split("\n");
-                    workspace.text.push(...data.shift().split(""));
+                    workspace.text.push(...data.shift().split("").filter(sym=>sym!=="\r"));
                     data.forEach((line)=>{
                         let spaces = 0;
                         for(let i=0; i<line.length; i++){
@@ -143,7 +163,7 @@
                         }
                         workspace.text.push(
                             BR + tab.repeat(Math.floor(spaces/4)), 
-                            ...line.substr(spaces).split("")
+                            ...line.substr(spaces).split("").filter(sym=>sym!=="\r")
                         );
                     });
                     workspace.loaded = true;
